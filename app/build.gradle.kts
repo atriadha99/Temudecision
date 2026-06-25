@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.andika.temudecision"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.andika.temudecision"
         minSdk = 25
-        targetSdk = 35
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
