@@ -1,5 +1,5 @@
 [versions]
-agp = "8.8.2"
+agp = "8.13.2"
 kotlin = "2.1.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -14,7 +14,6 @@ hiltNavigationCompose = "1.2.0"
 navigationCompose = "2.8.5"
 coroutines = "1.10.1"
 datastore = "1.1.2"
-appcompat = "1.7.1"
 material = "1.12.0"
 ksp = "2.1.0-1.0.29"
 
@@ -52,7 +51,6 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 # DataStore
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]

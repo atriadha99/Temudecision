@@ -3,7 +3,6 @@ package com.andika.temudecision.domain.methods
 import com.andika.temudecision.domain.model.DSSAlternative
 import com.andika.temudecision.domain.model.DSSCriterion
 import com.andika.temudecision.domain.model.RankingResult
-import kotlin.math.abs
 
 class ProfileMatchingMethod {
     // Gap weight mapping
