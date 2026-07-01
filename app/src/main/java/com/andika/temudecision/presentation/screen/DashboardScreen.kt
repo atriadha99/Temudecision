@@ -1,84 +1,212 @@
 package com.andika.temudecision.presentation.screen
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.andika.temudecision.presentation.viewmodel.DecisionViewModel
+import com.andika.temudecision.presentation.components.GlassCard
+import com.andika.temudecision.presentation.ui.theme.SDSSColors
+import com.andika.temudecision.presentation.ui.theme.SDSSTypography
+import com.andika.temudecision.presentation.viewmodel.DashboardViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
-    onCategoryClick: (Long, String) -> Unit,
-    viewModel: DecisionViewModel = hiltViewModel()
+    viewModel: DashboardViewModel = hiltViewModel()
 ) {
-    val categories by viewModel.categories.collectAsState()
+    val studyCount by viewModel.studyCount.collectAsState()
+    val criteriaCount by viewModel.criteriaCount.collectAsState()
+    val alternativeCount by viewModel.alternativeCount.collectAsState()
+    val calculationCount by viewModel.calculationCount.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("SmartChoice Dashboard") })
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { viewModel.addCategory("Kategori Baru", "➕") }) {
-                Icon(Icons.Default.Add, contentDescription = "Add Category")
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+        // Hero Banner
+        item {
+            HeroBanner()
+        }
+
+        // Stats Grid
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                StatCard(
+                    label = "Studi Kasus",
+                    value = studyCount.toString(),
+                    icon = Icons.Rounded.FolderOpen,
+                    iconBg = SDSSColors.Brand100,
+                    iconTint = SDSSColors.Brand500,
+                    modifier = Modifier.weight(1f)
+                )
+                StatCard(
+                    label = "Total Kriteria",
+                    value = criteriaCount.toString(),
+                    icon = Icons.Rounded.Checklist,
+                    iconBg = Color(0xFFECFDF5),
+                    iconTint = SDSSColors.Success,
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
-    ) { padding ->
-        if (categories.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                contentPadding = PaddingValues(16.dp),
-                modifier = Modifier.padding(padding),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(categories) { category ->
-                    CategoryCard(
-                        name = category.name,
-                        icon = category.icon,
-                        onClick = { onCategoryClick(category.id, category.name) }
-                    )
-                }
+                StatCard(
+                    label = "Total Alternatif",
+                    value = alternativeCount.toString(),
+                    icon = Icons.Rounded.People,
+                    iconBg = Color(0xFFEFF6FF),
+                    iconTint = SDSSColors.Info,
+                    modifier = Modifier.weight(1f)
+                )
+                StatCard(
+                    label = "Perhitungan",
+                    value = calculationCount.toString(),
+                    icon = Icons.Rounded.Calculate,
+                    iconBg = Color(0xFFFFFBEB),
+                    iconTint = SDSSColors.Warning,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+        
+        // Active Study or Welcome section
+        item {
+            WelcomeSection()
+        }
+    }
+}
+
+@Composable
+fun HeroBanner() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .background(
+                brush = Brush.horizontalGradient(
+                    listOf(SDSSColors.Brand600, Color(0xFF6366F1))
+                ),
+                shape = MaterialTheme.shapes.extraLarge
+            )
+            .padding(24.dp)
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Surface(
+                color = Color.White.copy(alpha = 0.1f),
+                shape = CircleShape
+            ) {
+                Text(
+                    "🌟 Smart Decision Support System (SDSS)",
+                    style = SDSSTypography.labelSmall,
+                    color = Color.White,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                )
+            }
+            Text(
+                "Pengambilan Keputusan Universal Menjadi Lebih Cerdas",
+                style = SDSSTypography.headlineLarge,
+                color = Color.White,
+                fontWeight = FontWeight.ExtraBold
+            )
+            Text(
+                "SDSS mendukung metode analisis terpopuler: SAW, WP, TOPSIS, SMART, Profile Matching, dan AHP.",
+                style = SDSSTypography.bodyMedium,
+                color = Color.White.copy(alpha = 0.8f)
+            )
+        }
+    }
+}
+
+@Composable
+fun StatCard(
+    label: String,
+    value: String,
+    icon: ImageVector,
+    iconBg: Color,
+    iconTint: Color,
+    modifier: Modifier = Modifier
+) {
+    GlassCard(modifier = modifier) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(iconBg, RoundedCornerShape(10.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(icon, contentDescription = null, tint = iconTint)
+            }
+            Column {
+                Text(
+                    value,
+                    style = SDSSTypography.displayLarge.copy(fontSize = 24.sp),
+                    fontWeight = FontWeight.ExtraBold
+                )
+                Text(
+                    label,
+                    style = SDSSTypography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
         }
     }
 }
 
 @Composable
-fun CategoryCard(name: String, icon: String, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1f)
-            .clickable(onClick = onClick),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+fun WelcomeSection() {
+    GlassCard(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.padding(24.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = icon, style = MaterialTheme.typography.displaySmall)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = name,
-                style = MaterialTheme.typography.labelLarge,
-                textAlign = TextAlign.Center
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    "Mulai Analisis Anda",
+                    style = SDSSTypography.headlineMedium
+                )
+                Text(
+                    "Pilih studi kasus yang ada atau buat baru untuk mulai membandingkan alternatif.",
+                    style = SDSSTypography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = { /* Navigate to studies */ },
+                    colors = ButtonDefaults.buttonColors(containerColor = SDSSColors.Brand500),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Text("Kelola Studi Kasus →")
+                }
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Text("📊", fontSize = 64.sp)
         }
     }
 }

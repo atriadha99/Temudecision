@@ -52,6 +52,17 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.navigation.compose)
 
+    // Charts (Vico)
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m3)
+    implementation(libs.vico.core)
+
+    // Google Fonts
+    implementation(libs.androidx.ui.text.google.fonts)
+
+    // Gson
+    implementation(libs.gson)
+
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

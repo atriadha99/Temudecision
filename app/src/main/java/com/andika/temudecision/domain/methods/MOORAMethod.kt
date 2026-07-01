@@ -12,24 +12,28 @@ class MOORAMethod {
     ): List<RankingResult> {
         if (alternatives.isEmpty() || criteria.isEmpty()) return emptyList()
 
-        // 1. Normalization
-        val dividers = criteria.associate { criterion ->
+        // 1. Normalization: r_ij = x_ij / sqrt(sum(x_ij^2))
+        val denominators = criteria.associate { criterion ->
             val sumSq = alternatives.sumOf { (it.scores[criterion.id] ?: 0.0).let { v -> v * v } }
             criterion.id to sqrt(sumSq)
         }
 
-        // 2. Optimization Value
+        // 2. Calculation of Yi = sum(benefit) - sum(cost)
         return alternatives.map { alt ->
             var benefitSum = 0.0
             var costSum = 0.0
             
             criteria.forEach { criterion ->
                 val x = alt.scores[criterion.id] ?: 0.0
-                val divider = dividers[criterion.id] ?: 1.0
-                val norm = if (divider == 0.0) 0.0 else x / divider
-                val weighted = norm * criterion.weight
+                val den = denominators[criterion.id] ?: 1.0
+                val normalized = if (den == 0.0) 0.0 else x / den
+                val weighted = normalized * criterion.weight
                 
-                if (criterion.isBenefit) benefitSum += weighted else costSum += weighted
+                if (criterion.isBenefit) {
+                    benefitSum += weighted
+                } else {
+                    costSum += weighted
+                }
             }
             
             RankingResult(alt.id, alt.name, benefitSum - costSum)

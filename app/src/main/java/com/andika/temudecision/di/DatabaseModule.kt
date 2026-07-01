@@ -21,22 +21,23 @@ object DatabaseModule {
         return Room.databaseBuilder(
             context,
             AppDatabase::class.java,
-            "smart_choice_db"
-        ).build()
+            "sdss_db"
+        ).fallbackToDestructiveMigration() // For development simplicity
+        .build()
     }
 
     @Provides
-    fun provideCategoryDao(db: AppDatabase): CategoryDao = db.categoryDao()
+    fun provideStudyDao(db: AppDatabase): StudyDao = db.studyDao()
 
     @Provides
-    fun provideCriterionDao(db: AppDatabase): CriterionDao = db.criterionDao()
+    fun provideCriteriaDao(db: AppDatabase): CriteriaDao = db.criteriaDao()
 
     @Provides
     fun provideAlternativeDao(db: AppDatabase): AlternativeDao = db.alternativeDao()
 
     @Provides
-    fun provideAlternativeValueDao(db: AppDatabase): AlternativeValueDao = db.alternativeValueDao()
+    fun provideScoreDao(db: AppDatabase): ScoreDao = db.scoreDao()
 
     @Provides
-    fun provideDecisionResultDao(db: AppDatabase): DecisionResultDao = db.decisionResultDao()
+    fun provideCalculationDao(db: AppDatabase): CalculationDao = db.calculationDao()
 }

@@ -7,19 +7,19 @@ import com.andika.temudecision.data.entity.*
 
 @Database(
     entities = [
-        CategoryEntity::class,
-        CriterionEntity::class,
+        StudyEntity::class,
+        CriteriaEntity::class,
         AlternativeEntity::class,
-        AlternativeValueEntity::class,
-        DecisionResultEntity::class
+        ScoreEntity::class,
+        CalculationEntity::class
     ],
-    version = 1,
+    version = 2, // Incremented version because of schema change
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun categoryDao(): CategoryDao
-    abstract fun criterionDao(): CriterionDao
+    abstract fun studyDao(): StudyDao
+    abstract fun criteriaDao(): CriteriaDao
     abstract fun alternativeDao(): AlternativeDao
-    abstract fun alternativeValueDao(): AlternativeValueDao
-    abstract fun decisionResultDao(): DecisionResultDao
+    abstract fun scoreDao(): ScoreDao
+    abstract fun calculationDao(): CalculationDao
 }

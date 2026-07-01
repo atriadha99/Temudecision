@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import java.util.UUID
 
 @Entity(
-    tableName = "alternatives",
+    tableName = "calculations",
     foreignKeys = [ForeignKey(
         entity = StudyEntity::class,
         parentColumns = ["id"],
@@ -15,10 +15,10 @@ import java.util.UUID
         onDelete = ForeignKey.CASCADE
     )]
 )
-data class AlternativeEntity(
+data class CalculationEntity(
     @PrimaryKey val id: String = UUID.randomUUID().toString(),
     @ColumnInfo(name = "study_id") val studyId: String,
-    val name: String,
-    val description: String = "",
-    val category: String = ""
+    val method: String,
+    val result: String, // JSON string
+    @ColumnInfo(name = "created_at") val createdAt: Long = System.currentTimeMillis()
 )

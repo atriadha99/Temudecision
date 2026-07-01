@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import java.util.UUID
 
 @Entity(
-    tableName = "alternatives",
+    tableName = "criteria",
     foreignKeys = [ForeignKey(
         entity = StudyEntity::class,
         parentColumns = ["id"],
@@ -15,10 +15,12 @@ import java.util.UUID
         onDelete = ForeignKey.CASCADE
     )]
 )
-data class AlternativeEntity(
+data class CriteriaEntity(
     @PrimaryKey val id: String = UUID.randomUUID().toString(),
     @ColumnInfo(name = "study_id") val studyId: String,
     val name: String,
-    val description: String = "",
-    val category: String = ""
+    val weight: Double,  // 0.0 - 1.0
+    val type: String,    // "benefit" | "cost"
+    @ColumnInfo(name = "target_value") val targetValue: Double = 3.0,
+    @ColumnInfo(name = "is_core_factor") val isCoreFactor: Boolean = true
 )

@@ -1,54 +1,34 @@
 package com.andika.temudecision.domain.methods
 
+import com.andika.temudecision.domain.model.DSSAlternative
+import com.andika.temudecision.domain.model.DSSCriterion
+import com.andika.temudecision.domain.model.RankingResult
+
 class AHPMethod {
-    /**
-     * Calculates the priority vector from a pairwise comparison matrix.
-     * @param matrix Square matrix of pairwise comparisons.
-     * @return Normalized priority vector (weights).
-     */
-    fun calculateWeights(matrix: Array<DoubleArray>): DoubleArray {
-        val n = matrix.size
-        val colSums = DoubleArray(n)
-        for (j in 0 until n) {
-            for (i in 0 until n) {
-                colSums[j] += matrix[i][j]
-            }
+    // AHP in this context applies the weights derived from pairwise comparison
+    // and uses a SAW-like approach for the final ranking.
+    fun calculate(
+        alternatives: List<DSSAlternative>,
+        criteria: List<DSSCriterion>
+    ): List<RankingResult> {
+        if (alternatives.isEmpty() || criteria.isEmpty()) return emptyList()
+
+        // 1. Normalization (Linear scale)
+        val maxValues = criteria.associate { criterion ->
+            criterion.id to (alternatives.maxOfOrNull { it.scores[criterion.id] ?: 0.0 } ?: 1.0)
         }
 
-        val normalizedMatrix = Array(n) { DoubleArray(n) }
-        for (i in 0 until n) {
-            for (j in 0 until n) {
-                normalizedMatrix[i][j] = matrix[i][j] / colSums[j]
+        // 2. Ranking
+        return alternatives.map { alt ->
+            var totalScore = 0.0
+            criteria.forEach { criterion ->
+                val x = alt.scores[criterion.id] ?: 0.0
+                val max = maxValues[criterion.id] ?: 1.0
+                val normalized = if (max == 0.0) 0.0 else x / max
+                totalScore += normalized * criterion.weight
             }
-        }
-
-        val weights = DoubleArray(n)
-        for (i in 0 until n) {
-            var rowSum = 0.0
-            for (j in 0 until n) {
-                rowSum += normalizedMatrix[i][j]
-            }
-            weights[i] = rowSum / n
-        }
-        return weights
-    }
-
-    fun calculateConsistencyRatio(matrix: Array<DoubleArray>, weights: DoubleArray): Double {
-        val n = matrix.size
-        if (n <= 2) return 0.0
-        
-        val lambdaMax = (0 until n).sumOf { i ->
-            var rowSum = 0.0
-            for (j in 0 until n) {
-                rowSum += matrix[i][j] * weights[j]
-            }
-            rowSum / weights[i]
-        } / n
-
-        val ci = (lambdaMax - n) / (n - 1)
-        val ri = listOf(0.0, 0.0, 0.58, 0.90, 1.12, 1.24, 1.32, 1.41, 1.45, 1.49)
-        val riValue = if (n <= ri.size) ri[n - 1] else 1.5
-        
-        return ci / riValue
+            RankingResult(alt.id, alt.name, totalScore)
+        }.sortedByDescending { it.score }
+            .mapIndexed { index, result -> result.copy(rank = index + 1) }
     }
 }

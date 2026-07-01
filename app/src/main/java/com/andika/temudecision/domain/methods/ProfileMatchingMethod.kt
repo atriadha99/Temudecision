@@ -5,7 +5,7 @@ import com.andika.temudecision.domain.model.DSSCriterion
 import com.andika.temudecision.domain.model.RankingResult
 
 class ProfileMatchingMethod {
-    // Gap weight mapping
+    
     private fun getGapWeight(gap: Double): Double {
         return when (gap) {
             0.0 -> 5.0
@@ -24,20 +24,42 @@ class ProfileMatchingMethod {
     fun calculate(
         alternatives: List<DSSAlternative>,
         criteria: List<DSSCriterion>,
-        targetValues: Map<Long, Double> // Target for each criterion
+        targetValues: Map<Long, Double> = emptyMap()
     ): List<RankingResult> {
         if (alternatives.isEmpty() || criteria.isEmpty()) return emptyList()
 
         return alternatives.map { alt ->
-            var totalWeight = 0.0
+            var coreFactor = 0.0
+            var secondaryFactor = 0.0
+            var cfCount = 0
+            var sfCount = 0
+            
             criteria.forEach { criterion ->
-                val target = targetValues[criterion.id] ?: 3.0 // Default target 3
-                val actual = alt.scores[criterion.id] ?: 0.0
-                val gap = actual - target
-                totalWeight += getGapWeight(gap)
+                val x = alt.scores[criterion.id] ?: 0.0
+                val target = targetValues[criterion.id] ?: 3.0 // Default target
+                val gap = x - target
+                val weight = getGapWeight(gap)
+                
+                // Assuming first half are core factors for simplicity if not specified
+                // In a real app, this would be a property of the criterion
+                val isCore = criteria.indexOf(criterion) < criteria.size / 2
+                
+                if (isCore) {
+                    coreFactor += weight
+                    cfCount++
+                } else {
+                    secondaryFactor += weight
+                    sfCount++
+                }
             }
-            val finalScore = totalWeight / criteria.size
-            RankingResult(alt.id, alt.name, finalScore)
+            
+            val ncf = if (cfCount > 0) coreFactor / cfCount else 0.0
+            val nsf = if (sfCount > 0) secondaryFactor / sfCount else 0.0
+            
+            // Total = 60% Core + 40% Secondary
+            val total = (0.6 * ncf) + (0.4 * nsf)
+            
+            RankingResult(alt.id, alt.name, total)
         }.sortedByDescending { it.score }
             .mapIndexed { index, result -> result.copy(rank = index + 1) }
     }

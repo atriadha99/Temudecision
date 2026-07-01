@@ -11,36 +11,35 @@ class SMARTMethod {
     ): List<RankingResult> {
         if (alternatives.isEmpty() || criteria.isEmpty()) return emptyList()
 
-        // 1. Normalize weights
-        val totalWeight = criteria.sumOf { it.weight }
-        val normWeights = criteria.associate { it.id to (it.weight / totalWeight) }
-
-        // 2. Find Min/Max for utility values
         val maxValues = mutableMapOf<Long, Double>()
         val minValues = mutableMapOf<Long, Double>()
+
         criteria.forEach { criterion ->
             val values = alternatives.map { it.scores[criterion.id] ?: 0.0 }
             maxValues[criterion.id] = values.maxOrNull() ?: 1.0
             minValues[criterion.id] = values.minOrNull() ?: 0.0
         }
 
-        // 3. Calculate Utility and Final Score
         return alternatives.map { alt ->
-            var totalUtility = 0.0
+            var totalScore = 0.0
             criteria.forEach { criterion ->
                 val x = alt.scores[criterion.id] ?: 0.0
                 val min = minValues[criterion.id] ?: 0.0
                 val max = maxValues[criterion.id] ?: 1.0
                 
-                val utility = if (max == min) 1.0 else if (criterion.isBenefit) {
-                    (x - min) / (max - min)
+                // Utility: u_ij = (x_ij - x_min) / (x_max - x_min)
+                val u = if (max - min != 0.0) {
+                    if (criterion.isBenefit) {
+                        (x - min) / (max - min)
+                    } else {
+                        (max - x) / (max - min)
+                    }
                 } else {
-                    (max - x) / (max - min)
+                    1.0
                 }
-                
-                totalUtility += (normWeights[criterion.id] ?: 0.0) * utility
+                totalScore += u * criterion.weight
             }
-            RankingResult(alt.id, alt.name, totalUtility)
+            RankingResult(alt.id, alt.name, totalScore)
         }.sortedByDescending { it.score }
             .mapIndexed { index, result -> result.copy(rank = index + 1) }
     }
