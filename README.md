@@ -59,4 +59,3 @@ app/src/main/java/com/andika/temudecision/
 Aplikasi ini dirancang untuk kebutuhan akademik (Skripsi/Tugas Akhir) maupun penggunaan praktis sehari-hari. Struktur kode dibuat sangat modular sehingga penambahan metode SPK baru dapat dilakukan dengan mudah tanpa merusak logika yang sudah ada.
 
 ---
-**Dibuat dengan ❤️ oleh Senior Android Developer Assistant.**
