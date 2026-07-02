@@ -97,7 +97,7 @@ fun StudyItem(
     onClick: () -> Unit,
     onDelete: () -> Unit
 ) {
-    val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+    val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
     
     GlassCard(
         modifier = Modifier

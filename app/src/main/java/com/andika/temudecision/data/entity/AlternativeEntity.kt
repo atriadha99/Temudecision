@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import java.util.UUID
 
 @Entity(
     tableName = "alternatives",
@@ -16,7 +15,7 @@ import java.util.UUID
     )]
 )
 data class AlternativeEntity(
-    @PrimaryKey val id: String = UUID.randomUUID().toString(),
+    @PrimaryKey val id: String = java.util.UUID.randomUUID().toString(),
     @ColumnInfo(name = "study_id") val studyId: String,
     val name: String,
     val description: String = "",

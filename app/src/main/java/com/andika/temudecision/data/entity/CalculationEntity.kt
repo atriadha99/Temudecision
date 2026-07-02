@@ -16,7 +16,7 @@ import java.util.UUID
     )]
 )
 data class CalculationEntity(
-    @PrimaryKey val id: String = UUID.randomUUID().toString(),
+    @PrimaryKey val id: String = java.util.UUID.randomUUID().toString(),
     @ColumnInfo(name = "study_id") val studyId: String,
     val method: String,
     val result: String, // JSON string

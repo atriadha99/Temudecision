@@ -13,7 +13,7 @@ import com.andika.temudecision.data.entity.*
         ScoreEntity::class,
         CalculationEntity::class
     ],
-    version = 2, // Incremented version because of schema change
+    version = 4, // Incremented version
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

@@ -26,7 +26,7 @@ import java.util.UUID
     indices = [Index(value = ["alternative_id", "criteria_id"], unique = true)]
 )
 data class ScoreEntity(
-    @PrimaryKey val id: String = UUID.randomUUID().toString(),
+    @PrimaryKey val id: String = java.util.UUID.randomUUID().toString(),
     @ColumnInfo(name = "alternative_id") val alternativeId: String,
     @ColumnInfo(name = "criteria_id") val criteriaId: String,
     val value: Double = 0.0

@@ -140,7 +140,7 @@ fun RecommendationCard(result: RankingResult, method: String) {
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    "Peringkat pertama dengan skor preferensi: ${String.format(Locale.getDefault(), "%.4f", result.score)}",
+                    "Peringkat pertama dengan skor preferensi: ${String.format(Locale.ROOT, "%.4f", result.score)}",
                     style = SDSSTypography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -151,6 +151,7 @@ fun RecommendationCard(result: RankingResult, method: String) {
 
 @Composable
 fun RankingItem(result: RankingResult) {
+    val scoreText = remember(result.score) { String.format(Locale.ROOT, "%.4f", result.score) }
     GlassCard(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -188,7 +189,7 @@ fun RankingItem(result: RankingResult) {
                 modifier = Modifier.weight(1f)
             )
             Text(
-                String.format(Locale.getDefault(), "%.4f", result.score),
+                scoreText,
                 style = SDSSTypography.titleMedium,
                 color = SDSSColors.Brand500
             )

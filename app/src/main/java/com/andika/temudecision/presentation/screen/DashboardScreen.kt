@@ -96,6 +96,11 @@ fun DashboardScreen(
         item {
             WelcomeSection()
         }
+
+        // Charts Placeholder
+        item {
+            ChartsSection()
+        }
     }
 }
 
@@ -207,6 +212,18 @@ fun WelcomeSection() {
             }
             Spacer(modifier = Modifier.width(16.dp))
             Text("📊", fontSize = 64.sp)
+        }
+    }
+}
+
+@Composable
+fun ChartsSection() {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Text("Analisis Data", style = SDSSTypography.titleLarge)
+        GlassCard(modifier = Modifier.fillMaxWidth().height(300.dp)) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Charts akan muncul di sini (Vico integration)", style = SDSSTypography.bodyMedium)
+            }
         }
     }
 }
